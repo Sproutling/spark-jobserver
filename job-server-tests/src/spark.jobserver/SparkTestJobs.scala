@@ -1,5 +1,5 @@
 package spark.jobserver
-
+import akka.util.Timeout
 import com.typesafe.config.Config
 import org.apache.spark._
 import org.apache.spark.rdd.RDD

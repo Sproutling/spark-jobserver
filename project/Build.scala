@@ -61,11 +61,11 @@ object JobServerBuild extends Build {
 
   lazy val jobServerTestJar = Project(id = "job-server-tests", base = file("job-server-tests"),
                                       settings = commonSettings ++ jobServerTestJarSettings
-                                     ).dependsOn(jobServerApi).disablePlugins(SbtScalariform)
+                                     ).dependsOn(akkaApp,jobServerApi).disablePlugins(SbtScalariform)
 
   lazy val jobServerApi = Project(id = "job-server-api",
                                   base = file("job-server-api"),
-                                  settings = commonSettings ++ publishSettings).disablePlugins(SbtScalariform)
+                                  settings = commonSettings ++ publishSettings).dependsOn(akkaApp).disablePlugins(SbtScalariform)
 
   lazy val jobServerExtras = Project(id = "job-server-extras",
                                      base = file("job-server-extras"),
@@ -77,7 +77,7 @@ object JobServerBuild extends Build {
                                          .dependsOn(buildPyExamples in jobServerPython)
                                          .dependsOn(clean in Compile in jobServerPython)
                                      )
-                                    ).dependsOn(jobServerApi, jobServer % "compile->compile; test->test")
+                                    ).dependsOn(jobServerApi, akkaApp, jobServer % "compile->compile; test->test")
                                     .disablePlugins(SbtScalariform)
 
 
@@ -234,7 +234,7 @@ object JobServerBuild extends Build {
     organization := "spark.jobserver",
     crossPaths   := true,
     crossScalaVersions := Seq("2.10.6","2.11.8"),
-    scalaVersion := sys.env.getOrElse("SCALA_VERSION", "2.10.6"),
+    scalaVersion := sys.env.getOrElse("SCALA_VERSION", "2.11.8"),
     publishTo    := Some(Resolver.file("Unused repo", file("target/unusedrepo"))),
     // scalastyleFailOnError := true,
     runScalaStyle := {
